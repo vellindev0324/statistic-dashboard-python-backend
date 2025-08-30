@@ -27,6 +27,7 @@ def get_result_data():
     # Contacted Countries
 
     contacted_countries_counts = df['country'].value_counts().to_dict()
+    
 
     # Create a dictionary to return
     response_data = {
