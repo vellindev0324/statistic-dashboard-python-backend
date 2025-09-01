@@ -51,9 +51,9 @@ def get_result_data():
 def receive_text():
     df = fetch_data()
     df_raw = df["raw_df"]
+    # Contacted Countries
     data = request.get_json()
     user_text = data.get("text", "")
-    print("Got text:", user_text)
     
     # Example: process text
     response = search_engine(df_raw, user_text)
