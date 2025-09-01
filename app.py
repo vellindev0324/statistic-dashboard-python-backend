@@ -1,17 +1,22 @@
-from filter import filtered_run, filtered_balanced, filtered_report, rawData
+# from filter import filtered_run, filtered_balanced, filtered_report, rawData
+from filter import fetch_data
 from flask_cors import CORS  # Import CORS
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from search_engine import search_engine
 
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
 
+
+
 @app.route("/api/result_data", methods=["GET"])
 def get_result_data():
-    df_run = filtered_run()
-    df_balanced = filtered_balanced()
-    df_report = filtered_report()
-    df = rawData()
-
+    df = fetch_data()
+    df_run = df["filtered_run"]
+    df_balanced = df["filtered_balanced"]
+    df_report = df["filtered_report"]
+    df_raw = df["raw_df"]
+    
     # Country & Accounts by Run
     run_country_counts = df_run['country'].value_counts().to_dict()
     run_account_counts = df_run['account'].value_counts().to_dict()
@@ -26,7 +31,7 @@ def get_result_data():
 
     # Contacted Countries
 
-    contacted_countries_counts = df['country'].value_counts().to_dict()
+    contacted_countries_counts = df_raw['country'].value_counts().to_dict()
     
 
     # Create a dictionary to return
@@ -42,6 +47,18 @@ def get_result_data():
 
     return jsonify(response_data)
 
+@app.route("/api/submit", methods=["POST"])
+def receive_text():
+    df = fetch_data()
+    df_raw = df["raw_df"]
+    data = request.get_json()
+    user_text = data.get("text", "")
+    print("Got text:", user_text)
+    
+    # Example: process text
+    response = search_engine(df_raw, user_text)
+    return jsonify(response)
+
 if __name__ == "__main__" :
-    app.run()
+    app.run(debug=True, use_reloader=False)
 

@@ -5,7 +5,7 @@ import json
 with open('apiCredential.json', 'r') as file:
     json_data = json.load(file)
 
-def export_data():
+def fetch_data_from_sheet():
     # Define scope
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
