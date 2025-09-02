@@ -5,11 +5,17 @@ import pandas as pd
 def fetch_data() :
     data = fetch_data_from_sheet()
 
-    # Convert to DataFrame
+    # Convert Data to Pandas DataFrame
     df = pd.DataFrame([row[:9] for row in data], columns=["No", "link", "name", "connection", "country", "account", "date", "status", "balanced"])
 
     # Convert date column to datetime type
     df["date"] = pd.to_datetime(df["date"], format="%m/%d/%Y", errors="coerce")
+
+    # Individual Name in Chatting following Account
+    df_chatting_names_by_account = df[df["status"]=="Chatting"].groupby("account")["name"].apply(list).to_dict()
+
+    # Individual Name in Accept following Account
+    df_waiting_names_by_account = df[df["status"]=="Waiting"].groupby("account")["name"].apply(list).to_dict()
 
     return_df = {
             "raw_df":df, 
@@ -20,50 +26,10 @@ def fetch_data() :
             "filtered_chatting":df[df["status"] == "Chatting"],
             "filtered_report":df[df["status"] == "Report/Block"],
             "filtered_waiting":df[df["status"] == "Waiting"],
-            "filtered_balanced":df[df["balanced"] == "yes"]
+            "filtered_balanced":df[df["balanced"] == "yes"],
+            "chatting_names":df_chatting_names_by_account,
+            "waiting_names":df_waiting_names_by_account
         }
     
     return return_df
-# def rawData() :
-#     return df
-
-# def filtered_run() :
-#     # Filter
-#     filtered = df[df["status"] == "Run"]
-#     return filtered
-
-# def filtered_report() :
-#     # Filter
-#     filtered = df[df["status"] == "Report/Block"]
-#     return filtered
-
-# def filtered_notInterested() :
-#     # Filter
-#     filtered = df[df["status"] == "Not Interested"]
-#     return filtered
-
-# def filtered_connecting() :
-#     # Filter
-#     filtered = df[df["status"] == "connecting"]
-#     return filtered
-
-# def filtered_accept() :
-#     # Filter
-#     filtered = df[df["status"] == "Accept"]
-#     return filtered
-
-# def filtered_chatting() :
-#     # Filter
-#     filtered = df[df["status"] == "Chatting"]
-#     return filtered
-
-# def filtered_waiting() :
-#     # Filter
-#     filtered = df[df["status"] == "Waiting"]
-#     return filtered
-
-# def filtered_balanced() :
-#     # Filter
-#     filtered = df[df["balanced"] == "yes"]
-#     return filtered
 

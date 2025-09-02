@@ -3,6 +3,7 @@ from filter import fetch_data
 from flask_cors import CORS  # Import CORS
 from flask import Flask, jsonify, request
 from search_engine import search_engine
+from yesterday_data import get_yesterday_stats
 
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
@@ -11,12 +12,15 @@ CORS(app) # Enable CORS for all routes
 
 @app.route("/api/result_data", methods=["GET"])
 def get_result_data():
+    
     df = fetch_data()
     df_run = df["filtered_run"]
     df_balanced = df["filtered_balanced"]
     df_report = df["filtered_report"]
     df_raw = df["raw_df"]
-    
+
+    # Get Yesterday Data
+    y_data = get_yesterday_stats(df_raw)
     # Country & Accounts by Run
     run_country_counts = df_run['country'].value_counts().to_dict()
     run_account_counts = df_run['account'].value_counts().to_dict()
@@ -42,9 +46,11 @@ def get_result_data():
         "balanced_account_counts": balanced_account_counts,
         "report_country_counts": report_country_counts,
         "report_account_counts": report_account_counts,
-        "contacted_countries_counts": contacted_countries_counts
+        "contacted_countries_counts": contacted_countries_counts,
+        "y_data":y_data,
+        "chatting_name":df["chatting_names"],
+        "waiting_name":df["waiting_names"]
     }
-
     return jsonify(response_data)
 
 @app.route("/api/submit", methods=["POST"])
