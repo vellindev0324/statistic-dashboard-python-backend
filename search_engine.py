@@ -25,6 +25,10 @@ def search_engine(df,key) :
     df_by_waiting = df[(df["country"] == key)&(df["status"] == "Waiting")]["account"].value_counts().to_dict()
     df_by_waiting_total = df[(df["country"] == key)&(df["status"] == "Waiting")]["country"].value_counts().to_dict()
 
+    # # Number of Balanced by Account
+    df_by_balanced = df[(df["country"] == key)&(df["balanced"] == "yes")]["account"].value_counts().to_dict()
+    df_by_balanced_total = df[(df["country"] == key)&(df["balanced"] == "yes")]["country"].value_counts().to_dict()
+
     return_df = {
         "df_number" : df_number,
         "df_accounts" : df_accounts,
@@ -37,6 +41,8 @@ def search_engine(df,key) :
         "df_by_chatting":df_by_chatting,
         "df_by_chatting_total":df_by_chatting_total,
         "df_by_waiting":df_by_waiting,
-        "df_by_waiting_total":df_by_waiting_total
+        "df_by_waiting_total":df_by_waiting_total,
+        "df_by_balanced":df_by_balanced,
+        "df_by_balanced_total":df_by_balanced_total
     }
     return return_df

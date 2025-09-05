@@ -49,7 +49,8 @@ def get_result_data():
         "contacted_countries_counts": contacted_countries_counts,
         "y_data":y_data,
         "chatting_name":df["chatting_names"],
-        "waiting_name":df["waiting_names"]
+        "waiting_name":df["waiting_names"],
+        "events_by_account":df["events_by_account"]
     }
     return jsonify(response_data)
 

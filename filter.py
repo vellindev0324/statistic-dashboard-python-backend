@@ -6,7 +6,7 @@ def fetch_data() :
     data = fetch_data_from_sheet()
 
     # Convert Data to Pandas DataFrame
-    df = pd.DataFrame([row[:9] for row in data], columns=["No", "link", "name", "connection", "country", "account", "date", "status", "balanced"])
+    df = pd.DataFrame([row[:10] for row in data], columns=["No", "link", "name", "connection", "country", "account", "date", "status", "balanced", "events"])
 
     # Convert date column to datetime type
     df["date"] = pd.to_datetime(df["date"], format="%m/%d/%Y", errors="coerce")
@@ -16,6 +16,9 @@ def fetch_data() :
 
     # Individual Name in Accept following Account
     df_waiting_names_by_account = df[df["status"]=="Waiting"].groupby("account")["name"].apply(list).to_dict()
+
+    # Scheduled Events
+    df_events_by_account = df[df["events"]!=""].groupby("account")[["name","events"]].apply(lambda g: g.to_dict("records")).to_dict()
 
     return_df = {
             "raw_df":df, 
@@ -28,7 +31,8 @@ def fetch_data() :
             "filtered_waiting":df[df["status"] == "Waiting"],
             "filtered_balanced":df[df["balanced"] == "yes"],
             "chatting_names":df_chatting_names_by_account,
-            "waiting_names":df_waiting_names_by_account
+            "waiting_names":df_waiting_names_by_account,
+            "events_by_account":df_events_by_account
         }
     
     return return_df
