@@ -11,11 +11,14 @@ def fetch_data() :
     # Convert date column to datetime type
     df["date"] = pd.to_datetime(df["date"], format="%m/%d/%Y", errors="coerce")
 
-    # Individual Name in Chatting following Account
+    # Individual Name List in Chatting following Account
     df_chatting_names_by_account = df[df["status"]=="Chatting"].groupby("account")["name"].apply(list).to_dict()
 
-    # Individual Name in Accept following Account
+    # Individual Name List in Waiting following Account
     df_waiting_names_by_account = df[df["status"]=="Waiting"].groupby("account")["name"].apply(list).to_dict()
+
+    # Individual Name List in Accept following Account
+    df_accept_names_by_account = df[df["status"]=="Accept"].groupby("account")["name"].apply(list).to_dict()
 
     # Scheduled Events
     df_events_by_account = df[df["events"]!=""].groupby("account")[["name","events"]].apply(lambda g: g.to_dict("records")).to_dict()
@@ -32,6 +35,7 @@ def fetch_data() :
             "filtered_balanced":df[df["balanced"] == "yes"],
             "chatting_names":df_chatting_names_by_account,
             "waiting_names":df_waiting_names_by_account,
+            "accept_names":df_accept_names_by_account,
             "events_by_account":df_events_by_account
         }
     
