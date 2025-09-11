@@ -7,3 +7,4 @@ json
 gspread
 google.oauth2.service_account
 datetime
+python-dotenv
