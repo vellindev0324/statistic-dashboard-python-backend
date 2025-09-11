@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from filter import fetch_data  # your function
+from .filter import fetch_data  # your function
 import pandas as pd
 
 def get_yesterday_stats(df):

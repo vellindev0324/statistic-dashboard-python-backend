@@ -1,7 +1,7 @@
 import requests
 import json
 
-with open('apiCredential.json', 'r') as file:
+with open('app/apiCredential.json', 'r') as file:
     json_data = json.load(file)
 
 

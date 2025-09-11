@@ -2,7 +2,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 import json
 
-with open('apiCredential.json', 'r') as file:
+with open('app/apiCredential.json', 'r') as file:
     json_data = json.load(file)
 
 def fetch_data_from_sheet():
@@ -11,7 +11,7 @@ def fetch_data_from_sheet():
 
     # Authorize
     creds = Credentials.from_service_account_file(
-        "service_account.json", scopes=SCOPES
+        "app/service_account.json", scopes=SCOPES
     )
     client = gspread.authorize(creds)
 

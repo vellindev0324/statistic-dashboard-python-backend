@@ -1,16 +1,13 @@
-# from filter import filtered_run, filtered_balanced, filtered_report, rawData
-from filter import fetch_data
+from flask import Blueprint, jsonify, request
+from .filter import fetch_data
 from flask_cors import CORS  # Import CORS
-from flask import Flask, jsonify, request
-from search_engine import search_engine
-from yesterday_data import get_yesterday_stats
+from .search_engine import search_engine
+from .yesterday_data import get_yesterday_stats
 
-app = Flask(__name__)
-CORS(app) # Enable CORS for all routes
+bp = Blueprint("api", __name__)
+CORS(bp) # Enable CORS for all routes
 
-
-
-@app.route("/api/result_data", methods=["GET"])
+@bp.route("/api/result_data", methods=["GET"])
 def get_result_data():
     
     df = fetch_data()
@@ -18,7 +15,6 @@ def get_result_data():
     df_balanced = df["filtered_balanced"]
     df_report = df["filtered_report"]
     df_raw = df["raw_df"]
-
     # Get Yesterday Data
     y_data = get_yesterday_stats(df_raw)
     # Country & Accounts by Run
@@ -55,7 +51,7 @@ def get_result_data():
     }
     return jsonify(response_data)
 
-@app.route("/api/submit", methods=["POST"])
+@bp.route("/api/submit", methods=["POST"])
 def receive_text():
     df = fetch_data()
     df_raw = df["raw_df"]
@@ -67,6 +63,5 @@ def receive_text():
     response = search_engine(df_raw, user_text)
     return jsonify(response)
 
-if __name__ == "__main__" :
-    app.run(debug=True, use_reloader=False)
-
+def register_routes(app):
+    app.register_blueprint(bp)

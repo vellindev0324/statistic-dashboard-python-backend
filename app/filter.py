@@ -1,4 +1,4 @@
-from use_service_account import fetch_data_from_sheet
+from .use_service_account import fetch_data_from_sheet
 import pandas as pd
 
 # Fetch Data 
