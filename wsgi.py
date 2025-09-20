@@ -1,5 +1,7 @@
 from app import create_app
+import os, certifi
 
+os.environ["SSL_CERT_FILE"] = certifi.where()
 
 app = create_app()
 

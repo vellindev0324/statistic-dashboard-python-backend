@@ -3,6 +3,7 @@ from .filter import fetch_data
 from flask_cors import CORS  # Import CORS
 from .search_engine import search_engine
 from .yesterday_data import get_yesterday_stats
+from .handle_sheet import add_new_content, update_status_content
 
 bp = Blueprint("api", __name__)
 CORS(bp) # Enable CORS for all routes
@@ -62,6 +63,17 @@ def receive_text():
     # Example: process text
     response = search_engine(df_raw, user_text)
     return jsonify(response)
+
+@bp.route("/api/update", methods=["POST"])
+def update_status():
+    data = request.get_json()  # get JSON from frontend
+    keyword = data.get("keyword")
+    new_value = data.get("new_value")
+    update_status_content(keyword, new_value)
+
+    return jsonify({"status":"success"})
+
+    
 
 def register_routes(app):
     app.register_blueprint(bp)
