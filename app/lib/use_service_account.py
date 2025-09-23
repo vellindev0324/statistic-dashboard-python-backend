@@ -20,7 +20,6 @@ def fetch_data_from_sheet():
     sheet = client.open_by_key(os.getenv("SPREADSHEET_ID")).sheet1
     return sheet.get_all_values()
 
-def get_sheet_dict():
-    sheet = client.open_by_key(os.getenv("SPREADSHEET_ID")).sheet1
+def get_sheet_dict(num):
+    sheet = client.open_by_key(os.getenv("SPREADSHEET_ID")).get_worksheet(num-1)
     return sheet
-    

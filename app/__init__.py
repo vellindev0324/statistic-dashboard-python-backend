@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS  # Import CORS
-from .routes import register_routes
+from .routes import register_routes, recording_daily_data
 
 
 def create_app():
@@ -11,6 +11,8 @@ def create_app():
 
     # register blueprints/routes
     register_routes(app)
+
+    recording_daily_data()
 
     return app
     

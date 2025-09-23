@@ -1,19 +1,31 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS  # Import CORS
+from datetime import datetime, timedelta
 from .lib.search_engine import search_engine
 from .lib.yesterday_data import get_yesterday_stats
 from .lib.filter import fetch_data
-from .lib.handle_sheet import add_new_content, update_status_content
+from .lib.handle_sheet import add_new_content, update_status_content, record_daily_data
 from .lib.use_service_account import get_sheet_dict, fetch_data_from_sheet
 
 bp = Blueprint("api", __name__)
 CORS(bp) # Enable CORS for all routes
-sheet = get_sheet_dict()
+sheet1 = get_sheet_dict(1)
+sheet2 = get_sheet_dict(2)
 data = fetch_data_from_sheet()
+
+def recording_daily_data():
+    df = fetch_data(data)
+    df_raw = df["raw_df"]
+    # Get Yesterday Data
+    y_data = get_yesterday_stats(df_raw)
+    today = datetime.now().date().strftime("%m/%d/%Y")
+    listed_y_data = [today, y_data["y_total_contacts"], y_data["y_accept_yesterday"], y_data["y_chatting_yesterday"],y_data["y_waiting_yesterday"]]
+    record_daily_data(today,sheet2,listed_y_data)
 
 @bp.route("/api/result_data", methods=["GET"])
 def get_result_data():
     
+    recording_daily_data()
     df = fetch_data(data)
     df_run = df["filtered_run"]
     df_balanced = df["filtered_balanced"]
@@ -21,6 +33,7 @@ def get_result_data():
     df_raw = df["raw_df"]
     # Get Yesterday Data
     y_data = get_yesterday_stats(df_raw)
+
     # Country & Accounts by Run
     run_country_counts = df_run['country'].value_counts().to_dict()
     run_account_counts = df_run['account'].value_counts().to_dict()
@@ -34,7 +47,6 @@ def get_result_data():
     report_account_counts = df_report['account'].value_counts().to_dict()
 
     # Contacted Countries
-
     contacted_countries_counts = df_raw['country'].value_counts().to_dict()
     
 
@@ -72,10 +84,11 @@ def update_status():
     data = request.get_json()  # get JSON from frontend
     keyword = data.get("keyword")
     new_value = data.get("new_value")
-    res = update_status_content(keyword, new_value, sheet)
+    res = update_status_content(keyword, new_value, sheet1)
     return res
 
     
 
 def register_routes(app):
     app.register_blueprint(bp)
+

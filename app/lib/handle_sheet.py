@@ -22,3 +22,17 @@ def update_status_content(keyword: str, value: str, sheet): # keyword:String, va
     else:
         return jsonify({"status": "false", "message": "Keyword not found or empty"}), 400
 
+def record_daily_data(date, sheet, content):# content type is List
+    if not date:
+        return
+    print("date is exist")
+    cell = sheet.find(date)
+    if not cell:
+        print("create new line")
+        last_row = len(sheet.get_all_values())
+        sheet.update(f"A{last_row+1}:E{last_row+1}", [content])
+    else:
+        print("update line")
+        row_number = cell.row
+        sheet.update(f"A{row_number}:E{row_number}", [content])
+
