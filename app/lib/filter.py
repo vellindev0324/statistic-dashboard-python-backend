@@ -1,9 +1,7 @@
-from .use_service_account import fetch_data_from_sheet
 import pandas as pd
 
 # Fetch Data 
-def fetch_data() :
-    data = fetch_data_from_sheet()
+def fetch_data(data) :
 
     # Convert Data to Pandas DataFrame
     df = pd.DataFrame([row[:10] for row in data], columns=["No", "link", "name", "connection", "country", "account", "date", "status", "balanced", "events"])

@@ -1,17 +1,20 @@
 from flask import Blueprint, jsonify, request
-from .filter import fetch_data
 from flask_cors import CORS  # Import CORS
-from .search_engine import search_engine
-from .yesterday_data import get_yesterday_stats
-from .handle_sheet import add_new_content, update_status_content
+from .lib.search_engine import search_engine
+from .lib.yesterday_data import get_yesterday_stats
+from .lib.filter import fetch_data
+from .lib.handle_sheet import add_new_content, update_status_content
+from .lib.use_service_account import get_sheet_dict, fetch_data_from_sheet
 
 bp = Blueprint("api", __name__)
 CORS(bp) # Enable CORS for all routes
+sheet = get_sheet_dict()
+data = fetch_data_from_sheet()
 
 @bp.route("/api/result_data", methods=["GET"])
 def get_result_data():
     
-    df = fetch_data()
+    df = fetch_data(data)
     df_run = df["filtered_run"]
     df_balanced = df["filtered_balanced"]
     df_report = df["filtered_report"]
@@ -54,7 +57,7 @@ def get_result_data():
 
 @bp.route("/api/submit", methods=["POST"])
 def receive_text():
-    df = fetch_data()
+    df = fetch_data(data)
     df_raw = df["raw_df"]
     # Contacted Countries
     data = request.get_json()
@@ -69,9 +72,8 @@ def update_status():
     data = request.get_json()  # get JSON from frontend
     keyword = data.get("keyword")
     new_value = data.get("new_value")
-    update_status_content(keyword, new_value)
-
-    return jsonify({"status":"success"})
+    res = update_status_content(keyword, new_value, sheet)
+    return res
 
     
 
