@@ -12,7 +12,6 @@ def create_app():
     # register blueprints/routes
     register_routes(app)
 
-    recording_daily_data()
 
     return app
     
