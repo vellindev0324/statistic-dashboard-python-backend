@@ -25,7 +25,7 @@ def recording_daily_data():
 
 @bp.route("/api/result_data", methods=["GET"])
 def get_result_data():
-    
+    data = fetch_data_from_sheet()
     recording_daily_data()
     df = fetch_data(data)
     df_run = df["filtered_run"]
