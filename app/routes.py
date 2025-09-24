@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS  # Import CORS
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from .lib.search_engine import search_engine
 from .lib.yesterday_data import get_yesterday_stats
 from .lib.filter import fetch_data
@@ -18,8 +18,9 @@ def recording_daily_data():
     df_raw = df["raw_df"]
     # Get Yesterday Data
     y_data = get_yesterday_stats(df_raw)
-    today = datetime.now().date().strftime("%m/%d/%Y")
-    listed_y_data = [today, y_data["y_total_contacts"], y_data["y_accept_yesterday"], y_data["y_chatting_yesterday"],y_data["y_waiting_yesterday"]]
+    today = date.today()
+    listed_y_data = [today.strftime("%m/%d/%Y"), y_data["y_total_contacts"], y_data["y_accept_yesterday"], y_data["y_chatting_yesterday"],y_data["y_waiting_yesterday"]]
+    print("------",today)
     record_daily_data(today,sheet2,listed_y_data)
 
 @bp.route("/api/result_data", methods=["GET"])
