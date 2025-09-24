@@ -9,24 +9,22 @@ from .lib.use_service_account import get_sheet_dict, fetch_data_from_sheet
 
 bp = Blueprint("api", __name__)
 CORS(bp) # Enable CORS for all routes
-sheet1 = get_sheet_dict(1)
-sheet2 = get_sheet_dict(2)
-data = fetch_data_from_sheet()
 
-def recording_daily_data():
+def recording_daily_data(data):
+    
     df = fetch_data(data)
     df_raw = df["raw_df"]
     # Get Yesterday Data
     y_data = get_yesterday_stats(df_raw)
     today = date.today()
     listed_y_data = [today.strftime("%m/%d/%Y"), y_data["y_total_contacts"], y_data["y_accept_yesterday"], y_data["y_chatting_yesterday"],y_data["y_waiting_yesterday"]]
-    print("------",today)
+    sheet2 = get_sheet_dict(2)
     record_daily_data(today,sheet2,listed_y_data)
 
 @bp.route("/api/result_data", methods=["GET"])
 def get_result_data():
     data = fetch_data_from_sheet()
-    recording_daily_data()
+    recording_daily_data(data)
     df = fetch_data(data)
     df_run = df["filtered_run"]
     df_balanced = df["filtered_balanced"]
@@ -70,6 +68,7 @@ def get_result_data():
 
 @bp.route("/api/submit", methods=["POST"])
 def receive_text():
+    data = fetch_data_from_sheet()
     df = fetch_data(data)
     df_raw = df["raw_df"]
     # Contacted Countries
@@ -82,6 +81,7 @@ def receive_text():
 
 @bp.route("/api/update", methods=["POST"])
 def update_status():
+    sheet1 = get_sheet_dict(1)
     data = request.get_json()  # get JSON from frontend
     keyword = data.get("keyword")
     new_value = data.get("new_value")
